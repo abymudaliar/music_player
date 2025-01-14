@@ -1,35 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+import 'homepage_provider.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      var provider = Provider.of<HompageProvider>(context, listen: false);
+      provider.setMusic();
+    });
+
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<HompageProvider>(context);
+
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              playerIcons(
-                context,
-                "assets/images/next-button.png",
-                reverse: true,
-                onTap: () {},
-              ),
-              playerIcons(
-                context,
-                "assets/images/play-button.png",
-                onTap: () {},
-              ),
-              playerIcons(
-                context,
-                "assets/images/next-button.png",
-                onTap: () {},
-              ),
-            ],
-          ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            StreamBuilder<Duration>(
+                stream: provider.player.positionStream,
+                builder: (context, snapshot) {
+                  final position = snapshot.data ?? Duration.zero;
+                  return Slider(
+                    value: position.inSeconds.toDouble(),
+                    min: 0.0,
+                    max: provider.playerDuration,
+                    onChanged: (double value) {},
+                  );
+                }),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                playerIcons(
+                  context,
+                  "assets/images/next-button.png",
+                  reverse: true,
+                  onTap: () {},
+                ),
+                Consumer<HompageProvider>(builder: (context, player, _) {
+                  return playerIcons(
+                    context,
+                    player.playerImageString,
+                    onTap: player.playerStateChange,
+                  );
+                }),
+                playerIcons(
+                  context,
+                  "assets/images/next-button.png",
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
