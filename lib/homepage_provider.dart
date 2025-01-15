@@ -16,15 +16,26 @@ class HompageProvider extends ChangeNotifier{
       _playerDuration = player.duration?.inSeconds.toDouble() ?? 0.0;
     }
 
-    void playerStateChange(){
-      if(player.playing){
-        player.pause();
-        _playerImageString = "assets/images/play-button.png";
+    void handleSeek(double value) async {
+      await player.seek(Duration(seconds: value.toInt()));
+    }
+
+    void playerStateChange({String state = ""}) async {
+      if(state == "back"){
+        await player.seek(Duration.zero);
       }
-      else{
-        player.play();
-        _playerImageString = "assets/images/pause.png";
+      else if(state == "pauseplay"){
+        if(player.playing){
+          player.pause();
+          _playerImageString = "assets/images/play-button.png";
+        }
+        else{
+          player.play();
+          _playerImageString = "assets/images/pause.png";
+        }
+        notifyListeners();
       }
-      notifyListeners();
+
+
     }
 }

@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
                     value: position.inSeconds.toDouble(),
                     min: 0.0,
                     max: provider.playerDuration,
-                    onChanged: (double value) {},
+                    onChanged: (double value) => provider.handleSeek(value),
                   );
                 }),
             Row(
@@ -51,13 +51,13 @@ class _HomePageState extends State<HomePage> {
                   context,
                   "assets/images/next-button.png",
                   reverse: true,
-                  onTap: () {},
+                  onTap: () => provider.playerStateChange(state: "back")
                 ),
                 Consumer<HompageProvider>(builder: (context, player, _) {
                   return playerIcons(
                     context,
                     player.playerImageString,
-                    onTap: player.playerStateChange,
+                    onTap: () => player.playerStateChange(state: "pauseplay"),
                   );
                 }),
                 playerIcons(
@@ -83,8 +83,8 @@ Widget playerIcons(BuildContext context, String assetString,
       quarterTurns: reverse ? 2 : 0,
       child: Image.asset(
         assetString,
-        width: size.width * 0.15,
-        height: size.height * 0.15,
+        width: size.width * 0.12,
+        height: size.height * 0.12,
       ),
     ),
   );
