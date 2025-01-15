@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/audio_list.dart';
+import 'package:music_player/request_permission.dart';
 import 'package:provider/provider.dart';
 
 import 'homepage_provider.dart';
@@ -11,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     // TODO: implement initState
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
       var provider = Provider.of<HompageProvider>(context, listen: false);
       provider.setMusic();
     });
-
+     requestPermission();
   }
 
   @override
@@ -47,12 +48,9 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                playerIcons(
-                  context,
-                  "assets/images/next-button.png",
-                  reverse: true,
-                  onTap: () => provider.playerStateChange(state: "back")
-                ),
+                playerIcons(context, "assets/images/next-button.png",
+                    reverse: true,
+                    onTap: () => provider.playerStateChange(state: "prev")),
                 Consumer<HompageProvider>(builder: (context, player, _) {
                   return playerIcons(
                     context,
@@ -70,6 +68,13 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      floatingActionButton: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => AudioList()),
+            );
+          },
+          child: Text("list")),
     );
   }
 }

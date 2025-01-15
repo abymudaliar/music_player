@@ -21,7 +21,7 @@ class HompageProvider extends ChangeNotifier{
     }
 
     void playerStateChange({String state = ""}) async {
-      if(state == "back"){
+      if(state == "prev"){
         await player.seek(Duration.zero);
       }
       else if(state == "pauseplay"){
