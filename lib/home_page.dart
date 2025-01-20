@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
       var provider = Provider.of<HompageProvider>(context, listen: false);
       provider.setMusic();
     });
-     requestPermission();
+    requestPermission();
   }
 
   @override
@@ -38,11 +38,27 @@ class _HomePageState extends State<HomePage> {
                 stream: provider.player.positionStream,
                 builder: (context, snapshot) {
                   final position = snapshot.data ?? Duration.zero;
-                  return Slider(
-                    value: position.inSeconds.toDouble(),
-                    min: 0.0,
-                    max: provider.playerDuration,
-                    onChanged: (double value) => provider.handleSeek(value),
+                  final duration = provider.player.duration;
+                  Duration result = Duration.zero;
+                  if (duration != null) {
+                    result = duration - position;
+                  }
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(position.toString().substring(0, 7)),
+                          Text(result.toString().substring(0, 7)),
+                        ],
+                      ),
+                      Slider(
+                        value: position.inSeconds.toDouble(),
+                        min: 0.0,
+                        max: provider.playerDuration,
+                        onChanged: (double value) => provider.handleSeek(value),
+                      ),
+                    ],
                   );
                 }),
             Row(
@@ -71,12 +87,30 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: ElevatedButton(
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => AudioList()),
+              _createRoute(),
             );
           },
           child: Text("list")),
     );
   }
+}
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => AudioList(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }
 
 Widget playerIcons(BuildContext context, String assetString,
