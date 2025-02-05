@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var provider = Provider.of<HompageProvider>(context, listen: false);
       provider.setMusic();
+      provider.setPlayList();
     });
     requestPermission();
   }
@@ -40,16 +41,29 @@ class _HomePageState extends State<HomePage> {
                   final position = snapshot.data ?? Duration.zero;
                   final duration = provider.player.duration;
                   Duration result = Duration.zero;
+                  String res = "";
+                  String pos = "";
                   if (duration != null) {
                     result = duration - position;
+
+                    if(duration.inSeconds >= 3600){
+                      res = result.toString().substring(0, 7);
+                      pos = position.toString().substring(0, 7);
+                    }
+                    else{
+                      res = result.toString().substring(2, 7);
+                      pos = position.toString().substring(2, 7);
+                    }
+
                   }
+
                   return Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(position.toString().substring(0, 7)),
-                          Text(result.toString().substring(0, 7)),
+                          Text(pos),
+                          Text(res),
                         ],
                       ),
                       Slider(
@@ -84,34 +98,24 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              _createRoute(),
-            );
-          },
-          child: Text("list")),
+      floatingActionButton: Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(context: context, isScrollControlled: true, builder: (BuildContext context){
+                    return FractionallySizedBox(heightFactor:0.95,child: AudioList());
+                  });
+                },
+                child: const Text("More",textAlign: TextAlign.center,)),
+          ],
+        ),
+      ),
     );
   }
 }
 
-Route _createRoute() {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => AudioList(),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(0.0, 1.0);
-      const end = Offset.zero;
-      const curve = Curves.ease;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
-  );
-}
 
 Widget playerIcons(BuildContext context, String assetString,
     {bool reverse = false, required GestureTapCallback onTap}) {
