@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'home_page.dart';
-import 'homepage_provider.dart';
+import 'view/home_page.dart';
+import 'providers/homepage_provider.dart';
 
 void main() {
 

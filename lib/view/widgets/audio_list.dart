@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
-import 'homepage_provider.dart';
+import '../../providers/homepage_provider.dart';
 
 class AudioList extends StatelessWidget {
   final _audioQuery = OnAudioQuery();
@@ -42,6 +42,7 @@ class AudioList extends StatelessWidget {
                         trailing: const Icon(Icons.more_horiz),
                         onTap: () {
                           provider.setMusicWithURI(snapshot.data![index]);
+
                           //Navigator.of(context).pop();
                         },
                       )),

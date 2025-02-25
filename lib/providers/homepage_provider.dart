@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_player/helpers/request_permission.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HompageProvider extends ChangeNotifier {
   final player = AudioPlayer();
@@ -17,18 +19,26 @@ class HompageProvider extends ChangeNotifier {
   final playList = <int, AudioSource>{};
 
   void setPlayList() async {
-    var tes = await _audioQuery.querySongs(
-        sortType: null,
-        orderType: OrderType.ASC_OR_SMALLER,
-        uriType: UriType.EXTERNAL,
-        ignoreCase: true);
-    for (int i = 0; i < tes.length; i++) {
-      var audioSource = AudioSource.uri(Uri.parse(tes[i].uri ?? ""));
-      playList[i] = audioSource;
-    }
+    final bool audioGranted = await Permission.audio.isGranted;
+    final bool storageGranted = await Permission.storage.isGranted;
+    if(audioGranted || storageGranted) {
+      var tes = await _audioQuery.querySongs(
+          sortType: null,
+          orderType: OrderType.ASC_OR_SMALLER,
+          uriType: UriType.EXTERNAL,
+          ignoreCase: true);
+      for (int i = 0; i < tes.length; i++) {
+        var audioSource = AudioSource.uri(Uri.parse(tes[i].uri ?? ""));
+        playList[i] = audioSource;
+      }
 
-    await player.setAudioSource(playList[0]!);
-    _playerDuration = player.duration?.inSeconds.toDouble() ?? 0.0;
+      await player.setAudioSource(playList[0]!);
+      _playerDuration = player.duration?.inSeconds.toDouble() ?? 0.0;
+    }
+    else{
+      await requestPermission();
+      setPlayList();
+    }
   }
 
   void setMusic() async {
@@ -56,6 +66,9 @@ class HompageProvider extends ChangeNotifier {
 
   void handleSeek(double value) async {
     await player.seek(Duration(seconds: value.toInt()));
+  }
+  void handleSeekOld(double value) async {
+    handleSeek(value);
   }
 
   void playerStateChange({String state = ""}) async {

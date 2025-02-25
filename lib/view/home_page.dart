@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/audio_list.dart';
-import 'package:music_player/request_permission.dart';
+import 'package:music_player/view/widgets/audio_list.dart';
+import 'package:music_player/helpers/request_permission.dart';
 import 'package:provider/provider.dart';
 
-import 'homepage_provider.dart';
+import '../providers/homepage_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,12 +17,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var provider = Provider.of<HompageProvider>(context, listen: false);
       provider.setMusic();
       provider.setPlayList();
     });
-    requestPermission();
+
   }
 
   @override
@@ -98,19 +99,17 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-                onTap: () {
-                  showModalBottomSheet(context: context, isScrollControlled: true, builder: (BuildContext context){
-                    return FractionallySizedBox(heightFactor:0.95,child: AudioList());
-                  });
-                },
-                child: const Text("More",textAlign: TextAlign.center,)),
-          ],
-        ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+              onTap: () {
+                showModalBottomSheet(context: context, isScrollControlled: true, builder: (BuildContext context){
+                  return FractionallySizedBox(heightFactor:0.95,child: AudioList());
+                });
+              },
+              child: const Text("More",textAlign: TextAlign.center,)),
+        ],
       ),
     );
   }
