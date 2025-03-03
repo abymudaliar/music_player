@@ -99,18 +99,14 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GestureDetector(
-              onTap: () {
-                showModalBottomSheet(context: context, isScrollControlled: true, builder: (BuildContext context){
-                  return FractionallySizedBox(heightFactor:0.95,child: AudioList());
-                });
-              },
-              child: const Text("More",textAlign: TextAlign.center,)),
-        ],
-      ),
+      floatingActionButton: GestureDetector(
+          onTap: () {
+            showModalBottomSheet(context: context, isScrollControlled: true, builder: (BuildContext context){
+              return FractionallySizedBox(heightFactor:0.95,child: AudioList());
+            });
+          },
+          child: const Text("More",textAlign: TextAlign.center,)),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat
     );
   }
 }

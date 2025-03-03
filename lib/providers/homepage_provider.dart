@@ -13,7 +13,7 @@ class HompageProvider extends ChangeNotifier {
   String get playerImageString => _playerImageString;
   double _playerDuration = 0.0;
   double get playerDuration => _playerDuration;
-  String _songTitle = "";
+  String _songTitle = "Nothing to display";
   String get songTitle => _songTitle;
 
   final playList = <int, AudioSource>{};

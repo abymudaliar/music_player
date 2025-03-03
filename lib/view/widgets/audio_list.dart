@@ -14,6 +14,8 @@ class AudioList extends StatelessWidget {
     var provider = Provider.of<HompageProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white54,
+        titleSpacing: 0,
         automaticallyImplyLeading: false,
         title: currentSongAppBar(provider: provider),
       ),
@@ -64,22 +66,31 @@ class currentSongAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return  TextButton(
+        style: TextButton.styleFrom(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero
+            )
+        ),
       onPressed: (){
         Navigator.of(context).pop();
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(provider.songTitle,
-                  style: const TextStyle(
-                    fontSize: 14,
-                  )),
-              Text(provider.songTitle, style: TextStyle(fontSize: 12)),
-            ],
+          Consumer<HompageProvider>(
+            builder: (context, player, _) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(player.songTitle,
+                      style: const TextStyle(
+                        fontSize: 14,
+                      )),
+                  Text(player.songTitle, style: const TextStyle(fontSize: 12)),
+                ],
+              );
+            }
           ),
           TextButton(
               onPressed: () => provider.playerStateChange(state: "pauseplay"),
